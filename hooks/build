@@ -5,4 +5,4 @@ docker build \
     --platform linux/amd64 \
     --build-arg VCS_REF="1.0.0" \
     --build-arg BUILD_DATE="$(date --rfc-3339 ns)" \
-    --tag "andrewmclagan/tcp-proxy" .
+    --tag "ghcr.io/hschub/tcp-proxy" .
