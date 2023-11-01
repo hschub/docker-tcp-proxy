@@ -3,12 +3,12 @@ FROM haproxy:1.9-alpine
 ENTRYPOINT ["/magic-entrypoint", "/docker-entrypoint.sh"]
 CMD ["haproxy", "-f", "/usr/local/etc/haproxy/haproxy.cfg"]
 
-RUN apk add --no-cache python3 &&\
+RUN apk add --no-cache python3 cmd:pip3 &&\
     pip3 install --no-cache-dir dnspython
 
 COPY magic-entrypoint.py /magic-entrypoint
 
-ENV DEFAULT_TIMEOUT=5s
+ENV DEFAULT_TIMEOUT=15s
 
 ENV NAMESERVERS="208.67.222.222 8.8.8.8 208.67.220.220 8.8.4.4" \
     LISTEN=:100 \
