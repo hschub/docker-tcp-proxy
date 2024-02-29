@@ -8,8 +8,8 @@ from dns.resolver import Resolver
 
 logging.root.setLevel(logging.INFO)
 
-LISTEN = os.environ["LISTEN"]
-TALK = os.environ["TALK"]
+CONTAINER = os.environ["CONTAINER"]
+HOST = os.environ["HOST"]
 NAMESERVERS = os.environ["NAMESERVERS"].split()
 resolver = Resolver()
 resolver.nameservers = NAMESERVERS
@@ -38,13 +38,13 @@ defaults
 
 # Render template
 config += TEMPLATE.format(
-    listen=f":{LISTEN}",
-    talk=f"host.docker.internal:{TALK}",
+    listen=f":{CONTAINER}",
+    talk=f"host.docker.internal:{HOST}",
 )
 
 # Write template to haproxy's cfg file
 with open("/usr/local/etc/haproxy/haproxy.cfg", "w") as cfg:
     cfg.write(config)
 
-logging.info(f"Proxying container:{LISTEN} TO host:{TALK}")
+logging.info(f"Proxying container:{CONTAINER} TO host:{HOST}")
 os.execv(sys.argv[1], sys.argv[1:])
