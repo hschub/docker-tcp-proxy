@@ -4,15 +4,9 @@ import logging
 import os
 import sys
 
-from dns.resolver import Resolver
-
 logging.root.setLevel(logging.INFO)
 
-CONTAINER = os.environ["CONTAINER"]
-HOST = os.environ["HOST"]
-NAMESERVERS = os.environ["NAMESERVERS"].split()
-resolver = Resolver()
-resolver.nameservers = NAMESERVERS
+HOST_PORT,CONTAINER_PORT = os.environ["PROXY_PASS"].split(':')
 TEMPLATE = """
 backend talk_0
     server stupid_0 {talk}
@@ -38,13 +32,13 @@ defaults
 
 # Render template
 config += TEMPLATE.format(
-    listen=f":{CONTAINER}",
-    talk=f"host.docker.internal:{HOST}",
+    listen=f":{CONTAINER_PORT}",
+    talk=f"host.docker.internal:{HOST_PORT}",
 )
 
 # Write template to haproxy's cfg file
 with open("/usr/local/etc/haproxy/haproxy.cfg", "w") as cfg:
     cfg.write(config)
 
-logging.info(f"Proxying container:{CONTAINER} TO host:{HOST}")
+logging.info(f"Proxying container:{CONTAINER_PORT} TO host:{HOST_PORT}")
 os.execv(sys.argv[1], sys.argv[1:])
